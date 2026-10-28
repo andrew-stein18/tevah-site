@@ -1,0 +1,13 @@
+# keep the repo to the site and how it's built
+*
+!.gitignore
+!README.md
+!site/
+!site/**
+site/.vercel/
+!source/
+!source/site.template.html
+!source/build_site.py
+!source/bg_layers.json
+!brand/
+!brand/*.svg

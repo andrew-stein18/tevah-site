@@ -1,0 +1,712 @@
+<title>Tevah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500&text=%D7%91%D7%A1%D7%B4%D7%93&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@1,6..72,500&display=swap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-54.69 -157.82 190.19 190.19'><title>tevah</title><rect x='-54.69' y='-157.82' width='190.19' height='190.19' rx='41.84' fill='%230c0f14'/><path fill='%23ece6d6' d='M40.1 -27.6Q40.1 -20.400000000000002 44.6 -16.8Q49.1 -13.200000000000001 56.800000000000004 -13.200000000000001Q61.300000000000004 -13.200000000000001 66.2 -13.950000000000001Q71.10000000000001 -14.700000000000001 77.7 -16.6V-13.3Q68.0 -7.2 61.75 -3.8000000000000003Q55.5 -0.4 50.85 0.9500000000000002Q46.2 2.3000000000000003 41.2 2.3000000000000003Q34.5 2.3000000000000003 28.950000000000003 -0.5Q23.400000000000002 -3.3000000000000003 20.05 -9.35Q16.7 -15.4 16.7 -25.1V-87.60000000000001L3.1 -96.7V-98.5Q4.2 -99.2 6.700000000000001 -100.65Q9.200000000000001 -102.10000000000001 12.75 -104.25Q16.3 -106.4 20.55 -109.05000000000001Q24.8 -111.7 29.5 -114.6Q34.2 -117.5 38.900000000000006 -120.4H40.1V-99.10000000000001ZM31.700000000000003 -90.10000000000001V-102.4H74.60000000000001L72.9 -90.10000000000001Z'/></svg>">
+<style>
+  /* One centered column: the still is the hero, one statement under it, two actions, a quiet footer.
+     A single deliberate dark look, matched to the dither's ink and paper. */
+  :root {
+    --ink: #0c0f14; --ink-2: #14181f; --paper: #ece6d6;
+    --muted: rgba(236, 230, 214, 0.46); --faint: rgba(236, 230, 214, 0.16); --hair: rgba(236, 230, 214, 0.22);
+    --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --serif: "Newsreader", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --e: cubic-bezier(0.16, 1, 0.3, 1); --e2: cubic-bezier(0.33, 1, 0.68, 1);
+    /* one size knob per screen class: the picture's cap, the room the words need below it, and the type */
+    --cap: 1160px; --reserve: 420px; --h1max: 52px; --body: 16px; --logo: 28px; --say: 12px; --foot: 11px; --pill: 44px; --pillf: 15px;
+    --gap: clamp(24px, 4vh, 40px); --footpad: 24px;
+    --fw: max(min(var(--cap), 100vw - 32px, (100dvh - var(--reserve)) * 16 / 9), min(100vw - 32px, 560px));
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--sans); -webkit-font-smoothing: antialiased;
+         display: grid; grid-template-rows: 1fr auto; min-height: 100%; }
+  body.locked { overflow: hidden; }
+
+  main { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+         padding-block: clamp(20px, 4vh, 48px) 0;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .top { width: var(--fw); max-width: 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+  .logo { display: block; height: var(--logo); }
+  .logo svg { height: 100%; width: auto; display: block; }
+  /* the pronunciation in the logo's own serif, sitting on the logo's baseline */
+  .say { font: italic 500 calc(var(--logo) * 0.64)/1 var(--serif); color: var(--muted); letter-spacing: 0; margin-bottom: -0.29em; }
+
+  /* the picture, whole and hard-edged; sized so the words below always fit on screen */
+  .frame { position: relative; width: var(--fw); max-width: 100%; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%230c0f14' stroke-opacity='.35' stroke-width='3.5'/%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%23ece6d6' stroke-width='1.75'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23ece6d6'/%3E%3C/svg%3E") 18 18, crosshair;
+           aspect-ratio: 16 / 9; }
+  #bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+
+  h1 { margin: var(--gap) 0 0; font-size: clamp(28px, calc(var(--fw) * 0.044), var(--h1max)); line-height: 1.05; letter-spacing: -0.035em;
+       font-weight: 700; text-wrap: balance; }
+  h1 .m { color: var(--muted); }
+  .ph { display: inline-block; }   /* break between the two halves of a line, not inside one */
+  footer .fde { opacity: 0.7; }
+  /* B"SD in the top right corner of the page, out of the way */
+  .bsd { position: fixed; top: max(8px, env(safe-area-inset-top, 0px)); right: max(10px, env(safe-area-inset-right, 0px)); z-index: 1;
+         font: 500 12px/1 "Frank Ruhl Libre", "Times New Roman", serif; color: var(--muted); letter-spacing: 0.02em; pointer-events: none; }
+  .desc { margin: 0.75em 0 0; font-size: var(--body); font-weight: 700; letter-spacing: -0.015em; line-height: 1.5; color: var(--muted); max-width: 64ch; text-wrap: balance; }
+
+  .ctas { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: clamp(20px, 3.2vh, 30px); }
+  .pill { display: inline-flex; align-items: center; justify-content: center; gap: 12px; height: var(--pill); min-width: calc(var(--pill) * 3.6); padding: 0 1.33em;
+          border-radius: 999px; border: 0; background: var(--paper); color: var(--ink); font: 600 var(--pillf)/1 var(--sans); cursor: pointer;
+          transition: transform 0.35s var(--e), background 0.3s var(--e2), color 0.3s var(--e2), box-shadow 0.3s var(--e2); }
+  .pill .ar { transition: transform 0.35s var(--e); }
+  .pill:hover { transform: translateY(-1px); }
+  .pill:hover .ar { transform: translateX(3px); }
+  .pill.ghost { background: transparent; color: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); }
+  .pill.ghost:hover { box-shadow: inset 0 0 0 1px var(--paper); }
+  .pill:focus-visible, .x:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+  footer { margin-top: calc(var(--footpad) + 4px); padding-block: var(--footpad); text-align: center; display: grid; gap: 7px; line-height: 1.4; font: 400 var(--foot)/1 var(--mono); color: var(--muted); letter-spacing: 0.02em;
+           padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  /* hero appear: a small rise from a 2px blur, in reading order, once */
+  .ap { opacity: 0; transform: translateY(6px); filter: blur(2px);
+        transition: opacity 0.6s var(--e2), transform 0.8s var(--e), filter 0.6s var(--e2); transition-delay: var(--d, 0s); }
+  .in .ap { opacity: 1; transform: none; filter: none; }
+
+  /* ---------- the two panels ---------- */
+  .scrim { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(12, 15, 20, 0.62);
+           backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+           padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+           animation: fade 0.35s var(--e2); }
+  .sheet { position: relative; width: min(460px, 100%); max-height: 100%; overflow: auto; text-align: left; padding: 28px 28px 24px;
+           background: var(--ink-2); border: 1px solid var(--faint); border-radius: 18px; animation: rise 0.5s var(--e); }
+  .scrim[hidden], [hidden] { display: none !important; }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  .sheet h2 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+  .sheet .lede { margin: 8px 0 22px; color: var(--muted); font-size: 15px; font-weight: 700; line-height: 1.5; }
+  .x { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 999px; border: 0; background: transparent;
+       color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; }
+  .x:hover { color: var(--paper); background: var(--faint); }
+  form { display: grid; gap: 14px; }
+  label { display: grid; gap: 6px; font: 700 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  input, textarea { width: 100%; font: 400 16px/1.4 var(--sans); color: var(--paper); background: transparent; border: 0;
+                    border-bottom: 1px solid var(--hair); padding: 6px 0 8px; border-radius: 0; text-transform: none; letter-spacing: 0; }
+  textarea { resize: vertical; min-height: 72px; }
+  input:focus, textarea:focus { border-bottom-color: var(--paper); outline: none; }
+  .row .pill { min-width: 0; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+  .status { font: 12px/1.4 var(--mono); color: var(--muted); min-height: 1.4em; }
+  .done { padding: 8px 0 4px; }
+  .done p { margin: 0 0 6px; font-size: 17px; }
+
+  .pill { white-space: nowrap; }
+  /* short laptop screens: tighter vertical rhythm so the picture keeps its size */
+  @media (min-width: 900px) and (max-height: 820px) { :root { --reserve: 360px; --gap: 20px; --footpad: 14px; } main { padding-top: 16px; } .top { margin-bottom: 10px; } }
+  /* big displays: everything grows together instead of floating small in the middle */
+  @media (min-width: 1800px) and (min-height: 1150px) {
+    :root { --cap: 1440px; --reserve: 480px; --h1max: 64px; --body: 19px; --logo: 34px; --say: 13px; --foot: 12px; --pill: 52px; --pillf: 17px; --gap: 44px; --footpad: 28px; } }
+  @media (min-width: 2300px) and (min-height: 1300px) {
+    :root { --cap: 1760px; --reserve: 560px; --h1max: 78px; --body: 22px; --logo: 40px; --say: 15px; --foot: 13px; --pill: 60px; --pillf: 19px; --gap: 52px; --footpad: 32px; } }
+  @media (max-width: 560px) { .desc .ph { display: inline; } .desc .q { display: block; }   /* phones: one short phrase per line */
+    .say { font-size: 17px; } .ctas .pill { flex: 1 1 0; min-width: 0; padding: 0 14px; gap: 8px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .ap { transition: none; opacity: 1; transform: none; filter: none; }
+    .scrim, .sheet { animation: none; }
+  }
+</style>
+
+<span class="bsd" lang="he" dir="rtl" aria-hidden="true">בס״ד</span>
+<main>
+  <header class="top ap" style="--d:0s">
+    <a class="logo" href="/" aria-label="tevah"><svg viewBox="3.10 -148.60 497.80 150.90" aria-hidden="true"><path fill="#ece6d6" d="M40.1 -27.6Q40.1 -20.400000000000002 44.6 -16.8Q49.1 -13.200000000000001 56.800000000000004 -13.200000000000001Q61.300000000000004 -13.200000000000001 66.2 -13.950000000000001Q71.10000000000001 -14.700000000000001 77.7 -16.6V-13.3Q68.0 -7.2 61.75 -3.8000000000000003Q55.5 -0.4 50.85 0.9500000000000002Q46.2 2.3000000000000003 41.2 2.3000000000000003Q34.5 2.3000000000000003 28.950000000000003 -0.5Q23.400000000000002 -3.3000000000000003 20.05 -9.35Q16.7 -15.4 16.7 -25.1V-87.60000000000001L3.1 -96.7V-98.5Q4.2 -99.2 6.700000000000001 -100.65Q9.200000000000001 -102.10000000000001 12.75 -104.25Q16.3 -106.4 20.55 -109.05000000000001Q24.8 -111.7 29.5 -114.6Q34.2 -117.5 38.900000000000006 -120.4H40.1V-99.10000000000001ZM31.700000000000003 -90.10000000000001V-102.4H74.60000000000001L72.9 -90.10000000000001Z M130.20000000000002 -104.60000000000001Q141.4 -104.60000000000001 149.55 -100.05000000000001Q157.70000000000002 -95.5 162.40000000000003 -86.75Q167.10000000000002 -78.0 168.10000000000002 -65.4H101.4V-71.8H155.8L145.5 -67.5Q144.60000000000002 -78.80000000000001 142.35000000000002 -85.70000000000002Q140.10000000000002 -92.60000000000001 136.35000000000002 -95.85000000000001Q132.60000000000002 -99.10000000000001 127.10000000000001 -99.10000000000001Q119.9 -99.10000000000001 114.75 -94.85000000000001Q109.60000000000001 -90.60000000000001 106.85000000000001 -82.05000000000001Q104.10000000000001 -73.5 104.10000000000001 -60.6Q104.10000000000001 -44.300000000000004 108.25 -34.150000000000006Q112.4 -24.0 120.35000000000001 -19.35Q128.3 -14.700000000000001 139.8 -14.700000000000001Q145.3 -14.700000000000001 150.4 -16.150000000000002Q155.5 -17.6 160.10000000000002 -20.55Q164.70000000000002 -23.5 168.4 -28.0L170.3 -26.6Q163.8 -15.9 157.3 -9.6Q150.8 -3.3000000000000003 143.65 -0.55Q136.5 2.2 128.10000000000002 2.2Q114.5 2.2 103.80000000000001 -3.7500000000000004Q93.10000000000001 -9.700000000000001 86.95000000000002 -21.200000000000003Q80.80000000000001 -32.7 80.80000000000001 -49.300000000000004Q80.80000000000001 -64.2 86.60000000000001 -76.80000000000001Q92.4 -89.4 103.45 -97.0Q114.5 -104.60000000000001 130.20000000000002 -104.60000000000001Z M274.0 -96.2 233.50000000000003 2.1H225.20000000000002L180.10000000000002 -95.2L168.00000000000003 -99.2V-102.4H219.90000000000003V-99.10000000000001L206.20000000000002 -95.60000000000001L240.70000000000005 -17.8L235.8 -17.0L265.90000000000003 -96.2L252.40000000000003 -99.10000000000001V-102.4H285.40000000000003V-99.10000000000001Z M349.29999999999995 -66.10000000000001 350.0 -61.6Q337.5 -57.6 329.79999999999995 -53.900000000000006Q322.09999999999997 -50.2 318.04999999999995 -46.5Q314.0 -42.800000000000004 312.5 -38.6Q311.0 -34.4 311.0 -29.3Q311.0 -20.8 315.45 -16.700000000000003Q319.9 -12.600000000000001 326.5 -12.600000000000001Q331.5 -12.600000000000001 335.25 -14.600000000000001Q339.0 -16.6 341.15 -20.5Q343.29999999999995 -24.400000000000002 343.29999999999995 -30.3V-76.60000000000001Q343.29999999999995 -86.2 338.44999999999993 -91.30000000000001Q333.59999999999997 -96.4 323.79999999999995 -96.4Q319.0 -96.4 314.4 -95.75Q309.79999999999995 -95.10000000000001 307.09999999999997 -93.9L312.09999999999997 -98.5Q311.59999999999997 -93.80000000000001 310.9 -89.65Q310.2 -85.5 309.29999999999995 -82.45Q308.4 -79.4 307.09999999999997 -77.80000000000001Q305.7 -76.0 302.85 -74.95Q300.0 -73.9 296.9 -73.9Q292.79999999999995 -73.9 290.54999999999995 -75.45Q288.29999999999995 -77.0 288.29999999999995 -80.0Q288.29999999999995 -84.30000000000001 292.44999999999993 -88.65Q296.59999999999997 -93.0 303.34999999999997 -96.6Q310.09999999999997 -100.2 318.15 -102.4Q326.2 -104.60000000000001 333.79999999999995 -104.60000000000001Q345.79999999999995 -104.60000000000001 353.0 -101.10000000000001Q360.2 -97.60000000000001 363.45 -91.30000000000001Q366.7 -85.0 366.7 -76.5V-18.900000000000002Q366.7 -15.8 367.7 -13.950000000000001Q368.7 -12.100000000000001 370.5 -11.25Q372.29999999999995 -10.4 374.59999999999997 -10.4Q377.7 -10.4 380.75 -11.350000000000001Q383.79999999999995 -12.3 387.09999999999997 -14.4V-11.0Q379.59999999999997 -2.7 373.54999999999995 -0.25Q367.5 2.2 360.7 2.2Q354.29999999999995 2.2 350.5 -0.5Q346.7 -3.2 345.04999999999995 -8.55Q343.4 -13.9 343.09999999999997 -21.6L343.7 -21.3Q341.9 -14.200000000000001 338.04999999999995 -8.9Q334.2 -3.6 328.75 -0.75Q323.29999999999995 2.1 316.7 2.1Q303.7 2.1 295.54999999999995 -4.65Q287.4 -11.4 287.4 -23.900000000000002Q287.4 -30.400000000000002 289.59999999999997 -35.400000000000006Q291.79999999999995 -40.400000000000006 298.19999999999993 -44.95Q304.59999999999997 -49.5 316.9 -54.55Q329.2 -59.6 349.29999999999995 -66.10000000000001Z M451.3 -2.8000000000000003 464.3 -5.9V-69.2Q464.3 -75.5 462.15 -79.6Q460.0 -83.7 455.65 -85.75Q451.3 -87.80000000000001 444.5 -87.80000000000001Q437.5 -87.80000000000001 431.05 -85.9Q424.6 -84.0 419.9 -81.7L418.8 -83.7Q426.6 -90.30000000000001 432.3 -94.4Q438.0 -98.5 442.45 -100.65Q446.9 -102.80000000000001 451.04999999999995 -103.60000000000001Q455.2 -104.4 460.0 -104.4Q474.4 -104.4 481.1 -96.60000000000001Q487.8 -88.80000000000001 487.8 -72.5V-5.9L500.9 -2.8000000000000003V0.0H451.3ZM435.6 0.0H386.0V-2.8000000000000003L399.2 -5.9V-128.0Q397.9 -128.70000000000002 395.54999999999995 -130.10000000000002Q393.2 -131.5 390.0 -133.35000000000002Q386.8 -135.20000000000002 382.9 -137.6V-139.70000000000002L421.8 -148.6H422.7V-94.30000000000001V-5.9L435.6 -2.8000000000000003Z"/></svg></a>
+    <span class="say">tay-vah · ark</span>
+  </header>
+  <div class="frame" id="frame">
+    <canvas id="bg" role="img" aria-label="A dithered illustration: a storm clears, the ark lands, and people walk out onto new ground toward the sun."></canvas>
+  </div>
+  <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> Rise with it.</h1>
+  <p class="desc ap" style="--d:0.22s"><span class="ph"><span class="q">Engineers inside your business,</span></span> <span class="ph"><span class="q">shipping the AI that changes how it runs.</span></span> <span class="ph"><span class="q">We don’t leave until you’re ahead.</span></span></p>
+  <div class="ctas ap" style="--d:0.28s">
+    <button class="pill" type="button" data-open="talk">Get in touch <span class="ar" aria-hidden="true">→</span></button>
+    <button class="pill ghost" type="button" data-open="hire">We're hiring <span class="ar" aria-hidden="true">→</span></button>
+  </div>
+</main>
+<footer class="ap" style="--d:0.34s"><span class="fde">Bringing AI to the rest of the economy.</span><span>© 2026 Tevah · Makers of Ark · tevah.io</span></footer>
+
+<div class="scrim" id="talk" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="talk-h">
+    <button class="x" type="button" data-close aria-label="Close">×</button>
+    <h2 id="talk-h">Get in touch</h2>
+    <p class="lede">Tell us a little about your company and where you are with AI. We'll get back to you.</p>
+    <form data-kind="inquiries" novalidate>
+      <p hidden><label>Leave empty<input name="bot" tabindex="-1" autocomplete="off"></label></p>
+      <label for="t-name">Name<input id="t-name" name="name" autocomplete="name" required></label>
+      <label for="t-email">Work email<input id="t-email" name="email" type="email" autocomplete="email" required></label>
+      <label for="t-company">Company<input id="t-company" name="company" autocomplete="organization"></label>
+      <label for="t-msg">What's on your mind<textarea id="t-msg" name="message" rows="3"></textarea></label>
+      <div class="row"><span class="status" aria-live="polite"></span><button class="pill" type="submit">Send <span class="ar" aria-hidden="true">→</span></button></div>
+    </form>
+    <div class="done" hidden><p>Thanks. We'll be in touch soon.</p></div>
+  </div>
+</div>
+
+<div class="scrim" id="hire" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hire-h">
+    <button class="x" type="button" data-close aria-label="Close">×</button>
+    <h2 id="hire-h">We're hiring</h2>
+    <p class="lede">We're a small team that moves fast. If you want to build through the storm with us, we'd like to hear from you.</p>
+    <form data-kind="applications" novalidate>
+      <p hidden><label>Leave empty<input name="bot" tabindex="-1" autocomplete="off"></label></p>
+      <label for="h-name">Name<input id="h-name" name="name" autocomplete="name" required></label>
+      <label for="h-email">Email<input id="h-email" name="email" type="email" autocomplete="email" required></label>
+      <label for="h-link">LinkedIn, GitHub or site<input id="h-link" name="link" type="url" inputmode="url" placeholder="https://"></label>
+      <label for="h-note">What do you want to build?<textarea id="h-note" name="note" rows="3"></textarea></label>
+      <div class="row"><span class="status" aria-live="polite"></span><button class="pill" type="submit">Apply <span class="ar" aria-hidden="true">→</span></button></div>
+    </form>
+    <div class="done" hidden><p>Thanks. We'll read it and get back to you.</p></div>
+  </div>
+</div>
+
+<script>
+const D = /*DATA*/null;
+const W = D.w, H = D.h, N_PX = W * H;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const touch = matchMedia('(hover: none)').matches;
+
+// ---------- Make it yours ----------
+const TRAVEL = 2000;                           // screen px of cursor travel that carries you all the way through the storm
+const AUTO = { at: 1.5, dur: 3.5 };                // with no movement, the storm clears on its own
+const AUTO_REPLAY = { at: 1.5, dur: 3.5 };      // when the storm comes back, the same short pass
+const REPLAY = { after: 15, idle: 2 };          // 15 s after it clears the storm rolls back in (not while someone is mid-move)
+const CALM = { r: 54, lift: 0.16 };            // the pocket of calm that travels with the cursor
+const WALK = 12, N = 15;                       // walking pace (grid px/s), how many people
+const SWAY = { x: 2, y: 1, period: 7.5 };      // the ark on the swell, in whole pixels
+const RISE = { depth: 40, up: 3.6, down: 2.6 };   // the ark rides low in the flood; once the water starts to go it rises out at one steady, eased pace (s)
+// once the storm has cleared, each part of the scene answers the cursor in its own way (grid px, seconds)
+const LIFE = {
+  doves: { scare: 30, flight: 3.6 },                           // doves lift off when you come close, then settle back
+  tree: { box: [550, 160, 604, 215], perches: [[566, 172], [578, 167.5], [590, 172.5]], stay: 6 },   // touch the olive tree and the doves come to rest on it
+  grass: { every: 0.05, life: 1.9, amp: 3.2, size: 1.5 },     // wind through the meadow behind the cursor
+  click: { drops: 22 },                                                           // a click splashes the water and glints in the sky
+  rainbow: { cx: 230, cy: 330, r: 232, band: 2.2, horizon: 214, hint: 0, touch: 1, touchBand: 3.4 },   // hover the sky and a rainbow comes out; always out on touch screens
+  face: 0.6                                                    // grid px around a walker that counts as looking at them
+};
+
+// ---------- data ----------
+function bits(b64) {
+  const raw = atob(b64), out = new Uint8Array(N_PX);
+  for (let i = 0; i < N_PX; i++) out[i] = (raw.charCodeAt(i >> 3) >> (7 - (i & 7))) & 1;
+  return out;
+}
+const col = c => ((255 << 24) | (c[2] << 16) | (c[1] << 8) | c[0]) >>> 0;   // unsigned, to compare with pixel values
+const INK = col(D.ink), PAPER = col(D.paper);
+const plate = Uint32Array.from(bits(D.plate), b => b ? PAPER : INK);
+const storm = Uint32Array.from(bits(D.storm), b => b ? PAPER : INK);
+const land = bits(D.land), rampM = bits(D.ramp), sea = bits(D.sea);
+const ordRaw = atob(D.order), order = new Float32Array(N_PX);
+for (let i = 0; i < N_PX; i++) order[i] = ordRaw.charCodeAt(i) / 255;
+const arkM = bits(D.ark_mask), arkB = bits(D.ark_bits), arkIdx = [], arkVal = [];
+for (let i = 0; i < N_PX; i++) if (arkM[i]) { arkIdx.push(i); arkVal.push(arkB[i] ? PAPER : INK); }
+let ARK_BOTTOM = 0;   // the hull's lowest row: the waterline it rises out of
+for (const i of arkIdx) if (!rampM[i]) ARK_BOTTOM = Math.max(ARK_BOTTOM, (i / W) | 0);
+const ARK_TOP = new Int16Array(W).fill(-1);   // the highest ark pixel in each column
+for (const i of arkIdx) if (!rampM[i]) { const x = i % W, y = (i / W) | 0; if (ARK_TOP[x] < 0 || y < ARK_TOP[x]) ARK_TOP[x] = y; }
+const LAND_N = land.reduce((a, b) => a + b, 0);
+
+let seed = 7;
+const NOISE = Float32Array.from({ length: 64 * 64 }, () => (seed = (seed * 16807) % 2147483647) / 2147483647);
+const grain = (x, y) => NOISE[((y & 63) << 6) | (x & 63)];
+
+const R = D.route, cum = [0];
+for (let i = 1; i < R.length; i++) cum.push(cum[i - 1] + Math.hypot(R[i][0] - R[i - 1][0], R[i][1] - R[i - 1][1]));
+const TOTAL = cum[cum.length - 1], SP = TOTAL / N;
+const KINDS = [0, 1, 0, 0, 3, 0, 1, 0, 0, 3, 0, 1, 0, 0, 0];   // 1 carries a bundle, 3 is a child
+function at(s) {
+  let i = 1;
+  while (i < cum.length - 1 && cum[i] < s) i++;
+  const k = (s - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
+  return [R[i - 1][0] + (R[i][0] - R[i - 1][0]) * k, R[i - 1][1] + (R[i][1] - R[i - 1][1]) * k];
+}
+function heightAt(s, x) {
+  if (s <= D.ramp_len) return (58 + 10 * s / D.ramp_len) / D.px;
+  const f = Math.min(1, Math.max(0, (x - D.path_x[0]) / (D.path_x[1] - D.path_x[0])) * 0.95);
+  return 74 * (1 - 0.72 * f) / D.px;
+}
+const io = u => u < 0.5 ? 4 * u ** 3 : 1 - (-2 * u + 2) ** 3 / 2;
+const clamp = v => Math.max(0, Math.min(1, v));
+
+let rs = 5;
+const rnd = () => (rs = (rs * 16807) % 2147483647) / 2147483647;
+const DROPS = Array.from({ length: 420 }, () => [rnd() * W * 1.15, rnd() * H, 4 + rnd() * 7, rnd()]);
+
+// ---------- canvas ----------
+const cv = document.getElementById('bg');
+cv.width = W; cv.height = H;
+const ctx = cv.getContext('2d');
+const img = ctx.createImageData(W, H), buf = new Uint32Array(img.data.buffer);
+const off = document.createElement('canvas'); off.width = W; off.height = H;
+const octx = off.getContext('2d', { willReadFrequently: true });
+
+function person(c, x, feet, h, ph, kid, carry, face = 0, wave = null) {
+  const headR = h * (kid ? 0.12 : 0.095), sh = feet - h * 0.78, hip = feet - h * 0.40, bw = h * 0.13;
+  c.beginPath(); c.ellipse(x, sh - headR * 1.1, headR, headR, 0, 0, 7); c.fill();
+  c.beginPath(); c.moveTo(x - bw, sh); c.lineTo(x + bw, sh); c.lineTo(x + bw * 1.15, hip); c.lineTo(x - bw * 1.15, hip); c.fill();
+  const s = Math.sin(ph) * h * 0.16 * (1 - face) + face * bw * 0.55, a = Math.cos(ph) * h * 0.14 * (1 - face) + face * bw * 1.25;   // facing you: feet apart, arms at sides
+  c.lineWidth = Math.max(0.7, h * 0.075); c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x, hip); c.lineTo(x + s, feet); c.moveTo(x, hip); c.lineTo(x - s, feet); c.stroke();
+  c.beginPath(); c.moveTo(x, sh + 0.6);
+  if (wave === null) c.lineTo(x + a, hip);
+  else c.lineTo(x + bw * (1.5 + 0.7 * wave), sh - h * 0.3);   // one arm up, waving
+  c.stroke();
+  if (carry) { c.beginPath(); c.ellipse(x - bw * 1.4, sh + h * 0.09, bw, h * 0.11, 0, 0, 7); c.fill(); }
+  else { c.beginPath(); c.moveTo(x, sh + 0.6); c.lineTo(x - a, hip); c.stroke(); }
+}
+
+// ---------- the story: moving is what moves you through the storm ----------
+let t = 0, travel = 0, lastMove = -99, prog = 0, shown = reduced ? 1 : 0, cleared = 0;
+const ptr = { x: -999, y: -999, a: 0, ta: 0, sx: null, sy: null, lastRip: -1, rx: -99, ry: -99 };
+const ripples = [], drops = [], glints = [], bolts = [];
+let arkDove = null, sunPulse = -9;
+const joined = [], FLOCK = [[372, 74], [470, 84], [436, 42], [500, 60]];   // doves from the ark that stayed with the flock
+const waveT = new Float32Array(15).fill(-9), walkAt = [];   // when each walker last waved; where each was drawn
+const walkS = Float32Array.from({ length: N }, (_, k) => k * SP), walkV = new Float32Array(N).fill(WALK), walkF = new Float32Array(N);
+const doveSt = D.doves.map(() => ({ t0: -1, dir: 1, perch: 0 }));
+let treeCalled = -99, treeUntil = -99;
+let lastT = 0, cycleStart = 0, doneAt = null, bow = 0, lastWake = -1, sink = reduced ? 0 : RISE.depth, riseP = reduced ? 1 : 0, ashore = reduced ? 1 : 0, sinking = false;
+const wakes = [];
+const BOW = [[196, 98, 78], [210, 150, 76], [214, 192, 98], [124, 168, 112], [96, 140, 178], [134, 112, 166]].map(col);
+function onMove(e) {
+  if (ptr.sx !== null) travel += Math.hypot(e.clientX - ptr.sx, e.clientY - ptr.sy);
+  ptr.sx = e.clientX; ptr.sy = e.clientY; lastMove = t;
+  const r = cv.getBoundingClientRect(), s = r.width / W;
+  const gx = (e.clientX - r.left) / s, gy = (e.clientY - r.top) / s;
+  const inside = gx >= 0 && gy >= 0 && gx < W && gy < H;
+  if (ptr.ta === 0 && inside) { ptr.x = gx; ptr.y = gy; }
+  ptr.tx = gx; ptr.ty = gy; ptr.ta = inside ? 1 : 0; ptr.gx = gx; ptr.gy = gy; ptr.inside = inside;
+  // once the land is clear, the water still answers the cursor
+  const i = (gy | 0) * W + (gx | 0), pgx = ptr.pgx ?? gx;
+  ptr.pgx = gx;
+  // wind through the meadow, in the direction the cursor is moving
+  if (inside && shown >= 1 && !reduced && land[i] && !sea[i] && t - lastWake > LIFE.grass.every && Math.abs(gx - pgx) > 0.6) {
+    wakes.push({ x: gx, y: gy, t0: t, dir: Math.sign(gx - pgx) }); lastWake = t;
+    if (wakes.length > 16) wakes.shift();
+  }
+  if (inside && shown >= 1 && sea[i] && t - ptr.lastRip > 0.12 && Math.hypot(gx - ptr.rx, gy - ptr.ry) > 5) {
+    ripples.push({ x: gx, y: gy, t0: t }); ptr.lastRip = t; ptr.rx = gx; ptr.ry = gy;
+    if (ripples.length > 18) ripples.shift();
+  }
+}
+addEventListener('pointermove', onMove, { passive: true });
+addEventListener('pointerdown', onMove, { passive: true });
+// a click answers in kind. In the storm: lightning in the sky, a splash below. Once it clears: the ark sends out a dove,
+// a walker waves, the sun flares, the water splashes, the grass gusts outward, the sky glints.
+function splash(x, y) {
+  for (let k = 0; k < LIFE.click.drops; k++) {
+    const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.2, v = 45 + Math.random() * 55;
+    drops.push({ x, y, vx: Math.cos(a) * v * 0.8, vy: Math.sin(a) * v, t0: t, y0: y });
+  }
+  ripples.push({ x, y, t0: t });
+}
+function bolt(x, y) {   // a jagged path from the top of the sky down to the click, with one fork
+  const pts = [[x + (Math.random() - 0.5) * 40, 0]], n = 9;
+  for (let k = 1; k <= n; k++) {
+    const u = k / n, [px] = pts[k - 1];
+    pts.push([k === n ? x : px + (x - px) / (n - k + 1) + (Math.random() - 0.5) * 14, y * u]);
+  }
+  const f = 3 + ((Math.random() * 3) | 0), fork = [pts[f]];
+  for (let k = 1; k <= 4; k++) fork.push([fork[k - 1][0] + (Math.random() < 0.5 ? -1 : 1) * (4 + Math.random() * 6), fork[k - 1][1] + 6 + Math.random() * 6]);
+  bolts.push({ paths: [pts, fork], t0: t });
+}
+cv.addEventListener('pointerdown', e => {
+  if (reduced) return;
+  const r = cv.getBoundingClientRect(), sc = r.width / W, x = (e.clientX - r.left) / sc, y = (e.clientY - r.top) / sc;
+  const i = (y | 0) * W + (x | 0);
+  if (shown < 1) { y < LIFE.rainbow.horizon - 20 && !arkM[i] ? bolt(x, y) : splash(x, y); return; }
+  if (arkM[i] && !rampM[i]) {   // the ark lets a dove go, as Noah did; it comes back from the tree with a leaf
+    if (!arkDove && joined.length < FLOCK.length) { const cx = Math.round(x); arkDove = { t0: t, x0: cx, y0: (ARK_TOP[cx] >= 0 ? ARK_TOP[cx] : y) - 3, slot: FLOCK[joined.length] }; }
+    return;
+  }
+  for (let k = 0; k < walkAt.length; k++) {   // a walker you click stops and waves
+    const w = walkAt[k];
+    if (w && Math.abs(x - w[0]) < 4 && y < w[1] + 3 && y > w[1] - w[2] - 3) { waveT[k] = t; return; }
+  }
+  if (Math.hypot(x - D.sun[0], y - D.sun[1]) < 26) { sunPulse = t; return; }
+  if (sea[i]) splash(x, y);
+  else if (land[i]) { wakes.push({ x, y, t0: t, dir: -1 }, { x, y, t0: t, dir: 1 }); while (wakes.length > 16) wakes.shift(); }   // the grass gusts outward
+  else glints.push({ x, y, t0: t });
+});
+document.documentElement.addEventListener('pointerleave', () => { ptr.ta = 0; ptr.sx = null; });
+// a finger is a tap or a drag, not a hover: when it lifts, the scene lets go a moment later
+let liftTok = 0;
+addEventListener('pointerup', e => {
+  if (e.pointerType === 'mouse') return;
+  const k = ++liftTok;
+  setTimeout(() => { if (k === liftTok) { ptr.inside = false; ptr.ta = 0; ptr.sx = null; } }, 1200);
+});
+// when the page fits on the screen there's nothing to scroll, so a drag across the picture plays with it instead
+const fitTouch = () => { cv.style.touchAction = touch && document.documentElement.scrollHeight <= innerHeight + 1 ? 'none' : ''; };
+addEventListener('resize', fitTouch); setTimeout(fitTouch, 800);   // after the first layout settles
+
+// ---------- frame ----------
+function frame(t) {
+  // progress follows how far the visitor has moved; it also clears on its own if they don't (always on touch)
+  if (!reduced && doneAt !== null && t - doneAt > REPLAY.after && t - lastMove > REPLAY.idle) {
+    prog = 0; travel = 0; doneAt = null; cycleStart = t + 2.8; sinking = true;   // the water rises again, then the cycle starts over
+  }
+  const A = cycleStart === 0 ? AUTO : AUTO_REPLAY;   // the first storm is brief, so a new visitor reaches the scene fast
+  const auto = reduced ? 1 : clamp((t - cycleStart - (touch ? Math.min(1.2, A.at) : A.at)) / A.dur);
+  prog = Math.max(prog, clamp(travel / TRAVEL), auto);
+  shown += (prog - shown) * (prog < shown ? 0.022 : 0.06);   // the water returns slowly, then clears at the reveal's pace
+  if (prog >= 1 && shown > 0.995) { shown = 1; if (doneAt === null) doneAt = t; }
+  const p = io(shown) * 1.08;
+  const done = shown >= 1;
+  const dt = Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
+  const here = done && !reduced && ptr.inside;
+  ptr.x += ((ptr.tx ?? ptr.x) - ptr.x) * 0.15; ptr.y += ((ptr.ty ?? ptr.y) - ptr.y) * 0.15;
+  ptr.a += ((done ? 0 : ptr.ta) - ptr.a) * 0.08;
+  const calmR2 = (CALM.r * (0.7 + 0.3 * ptr.a)) ** 2, lift = CALM.lift * ptr.a;
+
+  // storm or new ground, pixel by pixel; a bright waterline where land is surfacing
+  let landOpen = 0;
+  const openAt = i => {   // this pixel's progress, lifted near the cursor
+    if (lift < 0.005) return p;
+    const x = i % W, y = (i / W) | 0, d2 = (x - ptr.x) ** 2 + (y - ptr.y) ** 2;
+    if (d2 >= calmR2) return p;
+    const f = 1 - d2 / calmR2;
+    return p + lift * f * f * (0.75 + 0.5 * grain(x + 23, y + 41));   // soft, dithered edge
+  };
+  if (done) buf.set(plate);
+  else for (let i = 0; i < N_PX; i++) {
+    const o = order[i], pe = openAt(i);
+    if (pe > o) {
+      buf[i] = land[i] && pe < o + 0.022 ? PAPER : plate[i];   // a bright waterline where land surfaces
+      landOpen += land[i];
+    } else buf[i] = storm[i];
+  }
+  cleared = done ? 1 : landOpen / LAND_N;
+  if (!done) {
+    const fall = t * 300, wet = 1 - clamp(p);
+    for (const [x0, y0, ln, r] of DROPS) {
+      if (r > wet) continue;
+      const y = (y0 + fall) % (H + 20) - 10;
+      for (let k = 0; k < ln; k++) {
+        const yy = (y - k) | 0, xx = (x0 - 0.3 * yy) | 0;
+        if (yy < 0 || yy >= H || xx < 0 || xx >= W) continue;
+        const i = yy * W + xx;
+        if (openAt(i) <= order[i]) buf[i] = PAPER;
+      }
+    }
+  }
+
+  // hover the sky and a rainbow comes out over the clearing storm; on a phone there's no hover, so it simply comes out
+  bow += ((here && ptr.gy < LIFE.rainbow.horizon - 8 ? 1 : done ? (touch ? LIFE.rainbow.touch : LIFE.rainbow.hint) : 0) - bow) * 0.04;
+  if (bow > 0.01) {
+    const { cx, cy, r, horizon } = LIFE.rainbow, band = touch ? LIFE.rainbow.touchBand : LIFE.rainbow.band, outer = r, inner = r - band * BOW.length;
+    for (let y = Math.max(0, (cy - outer) | 0); y < horizon; y++) {
+      const fadeY = clamp((horizon - y) / 30);
+      const dyy = (y - cy) ** 2;
+      if (dyy > outer * outer) continue;
+      const xo = Math.sqrt(outer * outer - dyy), xi = dyy < inner * inner ? Math.sqrt(inner * inner - dyy) : 0;
+      for (const [a, b] of [[cx - xo, cx - xi], [cx + xi, cx + xo]]) for (let x = Math.max(0, a | 0); x < Math.min(W, Math.ceil(b)); x++) {
+        const i = y * W + x, d = Math.hypot(x - cx, y - cy);
+        if (d > outer || d < inner) continue;
+        const k = Math.min(BOW.length - 1, ((outer - d) / band) | 0);
+        const g = grain(x + 3, y + 11), a2 = bow * fadeY * (touch ? 1.6 : 1);   // wider and solid on phones, where it's always out
+        if ((buf[i] === PAPER && g < 0.62 * a2) || (buf[i] === INK && g < 0.2 * a2)) buf[i] = BOW[k];
+      }
+    }
+  }
+
+  // the ark: afloat while flooded, a gentle sway once landed
+  const amp = 1 + 2 * (1 - cleared);
+  const dx = Math.round(SWAY.x * amp * Math.sin(2 * Math.PI * t / SWAY.period));
+  const dy = Math.round(SWAY.y * amp * Math.sin(4 * Math.PI * t / SWAY.period + 0.8));
+  // a fixed-length rise, independent of how fast the storm clears: no lurch, no overshoot; it sinks back the same way when the storm returns
+  // on a replay the ark goes all the way back down first, then rises out again like the first time
+  if (sinking && riseP <= 0 && (shown <= 0.06 || prog > shown)) sinking = false;   // and stays down until the storm is back, or is already clearing again
+  if (sinking && done) sinking = false;   // never stuck under in a clear scene
+  riseP = clamp(riseP + (!sinking && (reduced || shown > 0.06) ? dt / RISE.up : -dt / RISE.down));
+  sink = RISE.depth * (1 - (1 - Math.cos(Math.PI * riseP)) / 2);
+  ashore = clamp(ashore + (riseP >= 1 ? dt / 0.9 : -dt / 0.3));   // people only come out once the ark is fully up
+  const sk = Math.max(0, Math.round(sink));
+  for (let j = 0; j < arkIdx.length; j++) {
+    const i = arkIdx[j], oy = (i / W) | 0, x = (i % W) + dx;
+    if (rampM[i] && !(done || openAt(i) > order[i] + 0.04)) continue;   // the ramp comes down onto dry land only
+    if (!rampM[i] && oy + sk > ARK_BOTTOM) {   // below the waterline: hidden, with a broken line of foam where hull meets water
+      const wy = ARK_BOTTOM + dy;
+      if (oy + sk === ARK_BOTTOM + 1 && x >= 0 && x < W && wy >= 0 && wy < H && grain(x, (t * 6) | 0) < 0.7) buf[wy * W + x] = PAPER;
+      continue;
+    }
+    const y = oy + dy + sk;   // the ramp rides with the hull
+    if (x >= 0 && x < W && y >= 0 && y < H) buf[y * W + x] = arkVal[j];
+  }
+
+  // wind through the meadow: a band of bending strokes that runs on in the cursor's direction and settles
+  if (wakes.length) {
+    const src = buf.slice();
+    for (let k = wakes.length - 1; k >= 0; k--) {
+      const w = wakes[k], age = t - w.t0;
+      if (age > LIFE.grass.life) { wakes.splice(k, 1); continue; }
+      const rx = (10 + age * 30) * LIFE.grass.size, ry = rx * 0.38, cx = w.x + w.dir * age * 22, am = LIFE.grass.amp * (1 - age / LIFE.grass.life) ** 1.2;
+      for (let y = Math.max(0, (w.y - ry) | 0); y < Math.min(H, w.y + ry + 1); y++) for (let x = Math.max(1, (cx - rx) | 0); x < Math.min(W - 2, cx + rx + 1); x++) {
+        const i = y * W + x;
+        if (!land[i]) continue;
+        const d = Math.hypot((x - cx) / rx, (y - w.y) / ry);
+        if (d >= 1 || d < 0.3) continue;
+        const k2 = Math.sin(Math.PI * (d - 0.3) / 0.7), wave = Math.sin(x * 0.35 - age * 9);
+        const sh = Math.round(am * k2 * w.dir * (0.75 + 0.25 * wave)), lift = Math.round(am * 0.35 * k2 * wave);
+        const j = i - sh - lift * W;
+        if ((sh || lift) && j >= 0 && j < N_PX) buf[i] = src[j];
+      }
+    }
+  }
+
+  // people on the dry land, walking toward the light; doves once the sky is clear
+  octx.setTransform(1, 0, 0, 1, 0, 0);
+  octx.clearRect(0, 0, W, H);
+  octx.fillStyle = octx.strokeStyle = '#000';
+  for (let k = 0; k < N; k++) {
+    let [x, y] = at(walkS[k]);
+    const looked = here && Math.abs(ptr.gx - x) < Math.max(3, heightAt(walkS[k], x) * LIFE.face) && ptr.gy < y + 2 && ptr.gy > y - heightAt(walkS[k], x) - 2;
+    const waving = t - waveT[k] < 2;
+    walkV[k] += ((reduced ? 0 : looked || waving ? 0 : WALK) - walkV[k]) * 0.12;
+    walkF[k] += ((looked || waving ? 1 : 0) - walkF[k]) * 0.15;
+    walkS[k] = (walkS[k] + walkV[k] * dt) % TOTAL;
+    const s = walkS[k];
+    [x, y] = at(s);
+    const fi = (y | 0) * W + (x | 0);
+    const dry = done ? 1 : clamp((openAt(fi) - order[fi]) / 0.06);
+    const o = Math.min(1, s / 10) * Math.min(1, (TOTAL - s) / 40) * dry * ashore;
+    walkAt[k] = null;
+    if (o <= 0) continue;
+    if (s <= D.ramp_len) { x += dx; y += dy; }
+    const kind = KINDS[k], h = heightAt(s, x) * (kind === 3 ? 0.62 : 1);
+    octx.globalAlpha = o;
+    walkAt[k] = [x, y, h];
+    person(octx, x, y + 1.3, h, s / 22 * 2 * Math.PI, kind === 3, kind === 1, walkF[k], waving ? Math.sin((t - waveT[k]) * 11) : null);
+  }
+  octx.lineWidth = 1.35; octx.lineCap = octx.lineJoin = 'round';
+  octx.globalAlpha = clamp((cleared - 0.8) / 0.2);
+  const rested = [];
+  // touch the tree and the doves fly over to rest on it, one after another; they stay a while after you leave
+  const [tx0, ty0, tx1, ty1] = LIFE.tree.box;
+  if (here && ptr.gx >= tx0 && ptr.gx <= tx1 && ptr.gy >= ty0 && ptr.gy <= ty1) {
+    if (t > treeUntil) treeCalled = t;
+    treeUntil = t + (touch ? LIFE.tree.stay : 1.2);
+  }
+  if (octx.globalAlpha > 0) D.doves.forEach(([bx, by, s], i) => {
+    const st = doveSt[i];
+    st.perch = clamp(st.perch + (t < treeUntil && t - treeCalled > i * 0.45 ? dt / 2.2 : -dt / 2.6));
+    const pk = io(st.perch), [px, py] = LIFE.tree.perches[i % LIFE.tree.perches.length];
+    let x = bx + (px - bx) * pk, y = by + (py - by) * pk - 26 * Math.sin(Math.PI * pk);   // an arc, up and over
+    // come too close and the dove lifts off, wheels away and settles back (not while it's coming to the tree you called it to)
+    if (here && st.t0 < 0 && st.perch === 0 && Math.hypot(ptr.gx - x, ptr.gy - y) < LIFE.doves.scare) { st.t0 = t; st.dir = Math.sign(x - ptr.gx) || 1; }
+    let lift = 0;
+    if (st.t0 >= 0) {
+      const u = (t - st.t0) / LIFE.doves.flight;
+      if (u >= 1) st.t0 = -1;
+      else { lift = Math.sin(Math.PI * u); x += st.dir * 55 * lift; y += -36 * lift - 9 * Math.sin(2 * Math.PI * u); }
+    }
+    if (pk > 0.97 && !lift) {   // at rest on the crown, against the sky: a small solid bird, head up, tail down, on a short leg
+      const r = 3.8, d = i % 2 ? -1 : 1;
+      rested.push([x, y]);
+      octx.beginPath(); octx.moveTo(x, y + r * 0.3); octx.lineTo(x, y + r * 1.1); octx.stroke();
+      octx.beginPath(); octx.ellipse(x, y, r * 0.62, r * 0.4, -0.25 * d, 0, 7); octx.fill();
+      octx.beginPath(); octx.arc(x + d * r * 0.55, y - r * 0.45, r * 0.26, 0, 7); octx.fill();
+      octx.beginPath(); octx.moveTo(x - d * r * 0.5, y + r * 0.1); octx.lineTo(x - d * r * 1.05, y + r * 0.45); octx.stroke();
+      return;
+    }
+    const bob = Math.sin(t * 0.9 + i * 2.1) * 1.2 * (1 - pk), yy = y + bob;
+    const flap = Math.sin(t * (5 + 11 * Math.max(lift, Math.sin(Math.PI * pk))) + i * 1.7) * s * (0.45 + 0.2 * lift);
+    octx.beginPath(); octx.moveTo(x - s, yy - s * 0.4 - flap); octx.lineTo(x, yy); octx.lineTo(x + s, yy - s * 0.5 - flap); octx.stroke();
+  });
+  let leaf = null;
+  for (const [jx, jy, js] of joined) {   // the ones that already joined fly with the flock
+    const yy = jy + Math.sin(t * 0.9 + jx) * 1.2, flap = Math.sin(t * 5 + jx) * js * 0.45;
+    octx.beginPath(); octx.moveTo(jx - js, yy - js * 0.4 - flap); octx.lineTo(jx, yy); octx.lineTo(jx + js, yy - js * 0.5 - flap); octx.stroke();
+  }
+  if (arkDove) {   // out to the olive tree, a rest, then up to join the others with the leaf in its beak
+    const OUT = 2.8, STAY = 1.4, JOIN = 2.6, age = t - arkDove.t0, tree = [572, 170];
+    let from = [arkDove.x0, arkDove.y0], to = tree, u, back = false;
+    if (age < OUT) u = age / OUT;
+    else if (age < OUT + STAY) u = 1;
+    else if (age < OUT + STAY + JOIN) { from = tree; to = arkDove.slot; u = (age - OUT - STAY) / JOIN; back = true; }
+    else { joined.push([...arkDove.slot, 4.2]); arkDove = null; u = -1; }
+    if (u >= 0) {
+      const k = io(u), [px, py] = to, x = from[0] + (px - from[0]) * k, y = from[1] + (py - from[1]) * k - (back ? 14 : 34) * Math.sin(Math.PI * u), s = 4.2;
+      octx.globalAlpha = 1;
+      if (u === 1 && !back) {
+        const r = 3.8; rested.push([x, y]);
+        octx.beginPath(); octx.moveTo(x, y + r * 0.3); octx.lineTo(x, y + r * 1.1); octx.stroke();
+        octx.beginPath(); octx.ellipse(x, y, r * 0.62, r * 0.4, 0.25, 0, 7); octx.fill();
+        octx.beginPath(); octx.arc(x - r * 0.55, y - r * 0.45, r * 0.26, 0, 7); octx.fill();
+      } else {
+        const flap = Math.sin(t * 13) * s * 0.55;
+        octx.beginPath(); octx.moveTo(x - s, y - s * 0.4 - flap); octx.lineTo(x, y); octx.lineTo(x + s, y - s * 0.5 - flap); octx.stroke();
+        if (back) leaf = [Math.round(x - 2), Math.round(y + 1)];
+      }
+    }
+  }
+  for (const [rx, ry] of rested)   // a little clear sky around each resting dove, so it reads against the dither
+    for (let y = Math.round(ry - 5); y <= ry + 2; y++) for (let x = Math.round(rx - 6); x <= rx + 6; x++)
+      if (x >= 0 && x < W && y >= 0 && y < H && ((x - rx) / 6) ** 2 + ((y - ry + 1) / 4.2) ** 2 < 1 && !land[y * W + x]) buf[y * W + x] = PAPER;
+  const a = octx.getImageData(0, 0, W, H).data;
+  for (let i = 0; i < N_PX; i++) {
+    const al = a[i * 4 + 3];
+    if (al && al / 255 > grain(i % W, (i / W) | 0) * 0.9 + 0.05) buf[i] = INK;
+  }
+  if (leaf) for (const [ox, oy] of [[0, 0], [-1, 0], [-1, 1], [-2, 1]]) {   // the olive leaf in its beak
+    const x = leaf[0] + ox, y = leaf[1] + oy;
+    if (x >= 0 && x < W && y >= 0 && y < H) buf[y * W + x] = BOW[3];
+  }
+
+  // what a click left behind: drops arcing up and falling back, a glint fading
+  const inv = j => (buf[j] === INK ? PAPER : INK);
+  for (let k = drops.length - 1; k >= 0; k--) {
+    const d = drops[k], age = t - d.t0, x = Math.round(d.x + d.vx * age), y = Math.round(d.y + d.vy * age + 110 * age * age);
+    if (age > 0.25 && y > d.y0 + 1 || age > 1.4) { drops.splice(k, 1); continue; }
+    for (const [ox, oy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {   // two-pixel drops, so they read against the water's grain
+      const xx = x + ox, yy = y + oy;
+      if (xx >= 0 && xx < W && yy >= 0 && yy < H) buf[yy * W + xx] = PAPER;
+    }
+  }
+  for (let k = bolts.length - 1; k >= 0; k--) {   // lightning: a flash over the storm, then the bolt flickers out
+    const b = bolts[k], age = t - b.t0;
+    if (age > 0.5 || shown >= 1) { bolts.splice(k, 1); continue; }
+    if (age < 0.12) for (let i = 0; i < N_PX; i++) if (buf[i] === INK && grain(i % W + 7, (i / W) | 0) < 0.3 * (1 - age / 0.12)) buf[i] = PAPER;
+    if (((age * 24) | 0) % 3 === 1) continue;
+    for (const pts of b.paths) for (let q = 1; q < pts.length; q++) {
+      const [x0, y0] = pts[q - 1], [x1, y1] = pts[q], n = Math.ceil(Math.hypot(x1 - x0, y1 - y0));
+      for (let m = 0; m <= n; m++) {
+        const x = Math.round(x0 + (x1 - x0) * m / n), y = Math.round(y0 + (y1 - y0) * m / n);
+        if (x >= 0 && x < W - 1 && y >= 0 && y < H) { buf[y * W + x] = PAPER; if (pts === b.paths[0]) buf[y * W + x + 1] = PAPER; }
+      }
+    }
+  }
+  if (t - sunPulse < 1.3) {   // the sun flares: rays run outward and fade
+    const age = t - sunPulse, [sx, sy] = D.sun, n = 16, r0 = 30 + age * 60, len = 14 * (1 - age / 1.3);   // out past the glow, where the sky is dark enough to show them
+    for (let q = 0; q < n; q++) {
+      const th = q / n * 2 * Math.PI + 0.1;
+      for (let rr = r0; rr < r0 + len; rr += 0.7) {
+        const x = Math.round(sx + Math.cos(th) * rr), y = Math.round(sy + Math.sin(th) * rr);
+        for (const ox of [0, 1]) if (x + ox < W && x >= 0 && y >= 0 && y < H && !land[y * W + x] && grain(x + ox, y + q) > age / 1.3 * 0.75) buf[y * W + x + ox] = PAPER;
+      }
+    }
+  }
+  for (let k = glints.length - 1; k >= 0; k--) {
+    const g = glints[k], age = t - g.t0;
+    if (age > 0.7) { glints.splice(k, 1); continue; }
+    const rad = 1.5 + age * 11, n = 8;
+    for (let q = 0; q < n; q++) for (const rr of [rad - 1, rad]) {
+      const th = q / n * 2 * Math.PI, x = Math.round(g.x + Math.cos(th) * rr * (q % 2 ? 0.6 : 1)), y = Math.round(g.y + Math.sin(th) * rr * (q % 2 ? 0.6 : 1));
+      if (x >= 0 && x < W && y >= 0 && y < H && grain(x + q, y) > age / 0.7 * 0.9) buf[y * W + x] = inv(y * W + x);
+    }
+  }
+
+  // ripples where the cursor crosses the water
+  for (let k = ripples.length - 1; k >= 0; k--) {
+    const r = ripples[k], age = t - r.t0;
+    if (age > 2.2) { ripples.splice(k, 1); continue; }
+    const fade = (1 - age / 2.2) ** 1.4;
+    for (const [rad, op] of [[2 + age * 15, fade], [2.7 + age * 15, fade * 0.8], [1 + age * 9, fade * 0.5]]) {
+      const steps = Math.ceil(rad * 8);
+      for (let q = 0; q < steps; q++) {
+        const th = q / steps * 2 * Math.PI, x = Math.round(r.x + Math.cos(th) * rad), y = Math.round(r.y + Math.sin(th) * rad * 0.32);
+        if (x < 0 || y < 0 || x >= W || y >= H) continue;
+        const i = y * W + x;
+        if (sea[i] && grain(x * 3 + q, y) < op) buf[i] = PAPER;
+      }
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
+}
+
+// ---------- clock: ~30fps pixel motion, paused when not visible ----------
+let visible = true, last = 0, raf = 0;
+function loop(now) {
+  raf = requestAnimationFrame(loop);
+  const dt = Math.min(0.1, (now - last) / 1000);
+  if (dt < 1 / 31) return;
+  last = now; t += dt;
+  frame(t);
+}
+function start() { if (!raf && visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } }
+function stop() { cancelAnimationFrame(raf); raf = 0; }
+frame(0);
+if (!reduced) {
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; visible ? start() : stop(); }).observe(cv);
+  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+  start();
+}
+requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('in')));
+</script>
+<script>
+// ---------- the two panels: open, close, submit ----------
+(() => {
+  let lastFocus = null;
+  const open = id => {
+    const s = document.getElementById(id);
+    lastFocus = document.activeElement;
+    s.hidden = false;
+    document.body.classList.add('locked');
+    setTimeout(() => s.querySelector('input')?.focus(), 30);
+  };
+  const close = () => {
+    document.querySelectorAll('.scrim').forEach(s => { s.hidden = true; });
+    document.body.classList.remove('locked');
+    lastFocus?.focus?.();
+  };
+  document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  document.querySelectorAll('.scrim').forEach(s => s.addEventListener('pointerdown', e => { if (e.target === s) close(); }));
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') close();
+    if (e.key !== 'Tab') return;
+    const s = [...document.querySelectorAll('.scrim')].find(x => !x.hidden);
+    if (!s) return;
+    const f = [...s.querySelectorAll('button, input, textarea')].filter(el => !el.closest('[hidden]'));
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+  });
+
+  // on claude.ai, submissions go to the page's own database, each visitor in their own slot that only the owner can read;
+  // on tevah.io they post to FORM_ENDPOINT (Formspree), which emails each one on
+  const FORM_ENDPOINT = { inquiries: 'https://formspree.io/f/maeeogol', applications: 'https://formspree.io/f/xqppqvqw' };
+  const store = (async () => {
+    const c = window.claude;
+    if (!c?.use) return null;
+    const [db, user] = await Promise.all([c.use('db'), c.use('user')]);
+    if (!db || !user) return null;
+    if ((await user.can('data.write')) === false) return null;
+    const id = await user.id();
+    return id ? { db, id } : null;
+  })().catch(() => null);
+
+  document.querySelectorAll('form[data-kind]').forEach(form => form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const status = form.querySelector('.status'), btn = form.querySelector('[type=submit]');
+    const fd = new FormData(form);
+    if (fd.get('bot')) return;
+    fd.delete('bot');
+    const data = Object.fromEntries(fd.entries());
+    for (const k in data) data[k] = String(data[k]).trim();
+    if (!data.name) { status.textContent = 'Add your name.'; form.elements.name.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) { status.textContent = 'Add an email we can reply to.'; form.elements.email.focus(); return; }
+    btn.disabled = true; status.textContent = 'Sending…';
+    const sent = () => { form.hidden = true; form.parentElement.querySelector('.done').hidden = false; };
+    try {
+      const s = await store;
+      if (s) {
+        await s.db.collection(`${form.dataset.kind}/${s.id}/items`).add({ ...data, at: new Date().toISOString() });
+      } else {
+        const url = FORM_ENDPOINT[form.dataset.kind];
+        if (!url) throw new Error('no inbox');
+        const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ ...data, _subject: `${form.closest('.sheet').querySelector('h2').textContent} · ${data.name}` }) });
+        if (!r.ok) throw new Error(r.status);
+      }
+      sent();
+    } catch {
+      status.textContent = "That didn't go through. Please try again in a moment.";
+    } finally { btn.disabled = false; }
+  }));
+})();
+</script>
