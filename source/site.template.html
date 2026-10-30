@@ -39,14 +39,10 @@
   /* the picture, whole and hard-edged; sized so the words below always fit on screen */
   .frame { position: relative; width: var(--fw); max-width: 100%; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%230c0f14' stroke-opacity='.35' stroke-width='3.5'/%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%23ece6d6' stroke-width='1.75'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23ece6d6'/%3E%3C/svg%3E") 18 18, crosshair;
            aspect-ratio: 16 / 9; }
-  /* a quiet chip in the corner so people know the picture plays back; gone after the first click */
-  .hint { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px 9px 12px; border-radius: 999px;
-          background: rgba(12, 15, 20, 0.9); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: var(--paper);
-          font: 500 calc(var(--foot) + 1px)/1 var(--mono); letter-spacing: 0.04em; pointer-events: none; box-shadow: 0 0 0 1px var(--faint);
-          opacity: 0; transform: translateY(4px); transition: opacity 0.6s var(--e2), transform 0.6s var(--e); }
-  .hint.on { opacity: 1; transform: none; }
-  .hint i { width: 6px; height: 6px; border-radius: 50%; background: var(--paper); animation: ping 1.8s ease-out infinite; }
-  @keyframes ping { from { box-shadow: 0 0 0 0 rgba(236, 230, 214, 0.55); } to { box-shadow: 0 0 0 8px rgba(236, 230, 214, 0); } }
+  /* a small muted note under the picture's corner so people know it plays back; gone after the first click */
+  .hint { position: absolute; right: 0; top: calc(100% + 8px); font: 400 var(--foot)/1 var(--mono); letter-spacing: 0.04em; color: var(--muted);
+          pointer-events: none; opacity: 0; transition: opacity 0.8s var(--e2); }
+  .hint.on { opacity: 0.7; }
   #bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 
   h1 { margin: var(--gap) 0 0; font-size: clamp(30px, calc(var(--fw) * 0.048), calc(var(--h1max) * 1.09)); line-height: 1.04; letter-spacing: -0.015em;
@@ -148,7 +144,7 @@
   </header>
   <div class="frame" id="frame">
     <canvas id="bg" role="img" aria-label="A dithered illustration: a storm clears, the ark lands, and people walk out onto new ground toward the sun."></canvas>
-    <span class="hint" id="hint" aria-hidden="true"><i></i><span>Click the picture</span></span>
+    <span class="hint" id="hint" aria-hidden="true">click the picture</span>
   </div>
   <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> Rise with it.</h1>
   <p class="desc ap" style="--d:0.22s"><span class="ph"><span class="q">Engineers inside your business,</span></span> <span class="ph"><span class="q">shipping the AI that changes how it runs.</span></span> <span class="ph"><span class="q">We don’t leave until you’re ahead.</span></span></p>
@@ -162,8 +158,8 @@
   <p class="lede"><span class="m">AI will decide which businesses thrive and which drown.</span> We make sure the businesses and institutions of the Jewish world thrive.</p>
   <p class="body">Jewish businesses fund our tzedakah, our institutions and our families. We want them on the winning side.</p>
 </section>
-<section class="who" id="story" aria-labelledby="story-h">
-  <h2 class="eyebrow" id="story-h">Our story</h2>
+<section class="who" id="who" aria-labelledby="who-h">
+  <h2 class="eyebrow" id="who-h">Who we are</h2>
   <img class="team" src="team.jpg" width="872" height="880" loading="lazy" decoding="async" alt="Andrew Stein and Asher Strell, the founders of Tevah, at a party.">
   <p class="lede"><span class="m">We deployed software at Palantir:</span> Lowe’s supply chain, Army logistics through the Iran war ($18M), and AI transformation at a $10B kidney care company.</p>
   <p class="body">Now we’re bringing it home, to the community we know and are trusted in.</p>
@@ -283,7 +279,7 @@ const cv = document.getElementById('bg');
 // tell people the picture is alive, once the scene has had a moment; it bows out at the first click or tap
 const hint = document.getElementById('hint');
 let hintGone = reduced;
-if (touch) hint.lastChild.textContent = 'Tap the picture';
+if (touch) hint.textContent = 'tap the picture';
 if (!reduced) setTimeout(() => hintGone || hint.classList.add('on'), 2600);
 cv.addEventListener('pointerdown', () => { hintGone = true; hint.classList.remove('on'); }, { once: true });
 cv.width = W; cv.height = H;
