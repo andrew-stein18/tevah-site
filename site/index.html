@@ -163,7 +163,7 @@
   </header>
   <div class="frame" id="frame">
     <canvas id="bg" role="img" aria-label="A dithered illustration: a storm clears, the ark lands, and people walk out onto new ground toward the sun."></canvas>
-    <span class="hint" id="hint" aria-hidden="true">click the picture</span>
+    <span class="hint" id="hint" aria-hidden="true">hover around the picture</span>
   </div>
   <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> Rise with it.</h1>
   <p class="desc ap" style="--d:0.22s"><span class="ph"><span class="q">Engineers inside your business,</span></span> <span class="ph"><span class="q">shipping the AI that changes how it runs.</span></span> <span class="ph"><span class="q">We don’t leave until you’re ahead.</span></span></p>
@@ -295,12 +295,14 @@ const DROPS = Array.from({ length: 420 }, () => [rnd() * W * 1.15, rnd() * H, 4 
 
 // ---------- canvas ----------
 const cv = document.getElementById('bg');
-// tell people the picture is alive, once the scene has had a moment; it bows out at the first click or tap
+// tell people the picture is alive, once the scene has had a moment; it bows out once they hover in or tap
 const hint = document.getElementById('hint');
 let hintGone = reduced;
 if (touch) hint.textContent = 'tap the picture';
 if (!reduced) setTimeout(() => hintGone || hint.classList.add('on'), 2600);
-cv.addEventListener('pointerdown', () => { hintGone = true; hint.classList.remove('on'); }, { once: true });
+const hideHint = () => { hintGone = true; hint.classList.remove('on'); };
+cv.addEventListener('pointerdown', hideHint, { once: true });
+cv.addEventListener('pointerenter', e => e.pointerType === 'mouse' && setTimeout(hideHint, 2500), { once: true });   // once they're exploring, let it go
 cv.width = W; cv.height = H;
 const ctx = cv.getContext('2d');
 const img = ctx.createImageData(W, H), buf = new Uint32Array(img.data.buffer);
