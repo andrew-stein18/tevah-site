@@ -49,7 +49,7 @@
          padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
   .top { width: var(--fw); max-width: 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-  .logo { display: block; height: var(--logo); color: #f1cb7e; }
+  .logo { display: block; height: var(--logo); color: var(--paper); }
   .logo svg { height: 100%; width: auto; display: block; }
   /* the pronunciation in the logo's own serif, sitting on the logo's baseline */
   .say { font: italic 500 calc(var(--logo) * 0.64)/1 var(--serif); color: var(--muted); letter-spacing: 0; margin-bottom: -0.29em; }
@@ -57,6 +57,14 @@
   /* the picture, whole and hard-edged; sized so the words below always fit on screen */
   .frame { position: relative; width: var(--fw); max-width: 100%; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%230c0f14' stroke-opacity='.35' stroke-width='3.5'/%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%23ece6d6' stroke-width='1.75'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23ece6d6'/%3E%3C/svg%3E") 18 18, crosshair;
            aspect-ratio: 16 / 9; }
+  /* a quiet chip in the corner so people know the picture plays back; gone after the first click */
+  .hint { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px 9px 12px; border-radius: 999px;
+          background: rgba(12, 15, 20, 0.9); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: var(--paper);
+          font: 500 calc(var(--foot) + 1px)/1 var(--mono); letter-spacing: 0.04em; pointer-events: none; box-shadow: 0 0 0 1px var(--faint);
+          opacity: 0; transform: translateY(4px); transition: opacity 0.6s var(--e2), transform 0.6s var(--e); }
+  .hint.on { opacity: 1; transform: none; }
+  .hint i { width: 6px; height: 6px; border-radius: 50%; background: var(--paper); animation: ping 1.8s ease-out infinite; }
+  @keyframes ping { from { box-shadow: 0 0 0 0 rgba(236, 230, 214, 0.55); } to { box-shadow: 0 0 0 8px rgba(236, 230, 214, 0); } }
   #bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 
   h1 { margin: var(--gap) 0 0; font-size: clamp(30px, calc(var(--fw) * 0.048), calc(var(--h1max) * 1.09)); line-height: 1.04; letter-spacing: -0.015em;
@@ -91,16 +99,10 @@
   .who .lede .m { color: var(--muted); }
   .founders { list-style: none; margin: 36px 0 0; padding: 0; display: flex; justify-content: center; gap: clamp(28px, 6vw, 72px); }
   .founders li { display: grid; gap: 8px; }
-  /* names link to LinkedIn, quietly */
-  .founders a { color: inherit; text-decoration: none; display: inline-flex; align-items: baseline; justify-content: center; gap: 4px; }
-  .founders a i { font: 400 0.8em/1 var(--sans); font-style: normal; color: var(--muted); transition: color 0.3s var(--e2), transform 0.35s var(--e); }
-  .founders a:hover b { text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 4px; }
-  .founders a:hover i { color: var(--paper); transform: translate(1px, -1px); }
-  .founders a:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   .founders b { font: 700 var(--body)/1 var(--sans); letter-spacing: -0.015em; }
   .founders span, .who .backed { font: 400 var(--foot)/1 var(--mono); letter-spacing: 0.04em; color: var(--muted); }
   .who .backed { margin: 32px 0 0; }
-  .who .body { margin: 24px auto 0; max-width: 58ch; font-size: var(--body); font-weight: 700; letter-spacing: -0.015em; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+  .who .body { margin: 24px auto 0; max-width: 58ch; font-size: var(--body); font-weight: 700; letter-spacing: -0.015em; line-height: 1.55; color: var(--muted); text-wrap: balance; }
   .who .body + .body { margin-top: 14px; }
   .who + .who { padding-top: clamp(40px, 7vh, 80px); margin-top: 0; }
 
@@ -152,6 +154,7 @@
   @media (prefers-reduced-motion: reduce) {
     .ap { transition: none; opacity: 1; transform: none; filter: none; }
     .scrim, .sheet { animation: none; }
+    .hint { display: none; }
   }
 </style>
 </head>
@@ -164,6 +167,7 @@
   </header>
   <div class="frame" id="frame">
     <canvas id="bg" role="img" aria-label="A dithered illustration: a storm clears, the ark lands, and people walk out onto new ground toward the sun."></canvas>
+    <span class="hint" id="hint" aria-hidden="true"><i></i><span>Click the picture</span></span>
   </div>
   <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> Rise with it.</h1>
   <p class="desc ap" style="--d:0.22s"><span class="ph"><span class="q">Engineers inside your business,</span></span> <span class="ph"><span class="q">shipping the AI that changes how it runs.</span></span> <span class="ph"><span class="q">We don’t leave until you’re ahead.</span></span></p>
@@ -175,14 +179,14 @@
 <section class="who" id="mission" aria-labelledby="mission-h">
   <h2 class="eyebrow" id="mission-h">Our mission</h2>
   <p class="lede"><span class="m">AI will decide which businesses thrive and which drown.</span> We make sure the businesses and institutions of the Jewish world thrive.</p>
-  <p class="body">Jewish businesses fund our tzedakah, our institutions and our families. We bring top engineers to where our community actually runs: nursing homes, wholesale, real estate, diamonds, and the non‑profits that hold us together. From Boro Park and Deal to Beverly Hills, Tel Aviv and Antwerp.</p>
-  <p class="body">It’s our community: we know it, we’re trusted in it, and we can move fast in it. We’re building Tevah as a serious company, because the way to do the most good is at scale.</p>
+  <p class="body">Jewish businesses fund our tzedakah, our institutions and our families. We want them on the winning side.</p>
 </section>
-<section class="who" id="who" aria-labelledby="who-h">
-  <h2 class="eyebrow" id="who-h">Who we are</h2>
+<section class="who" id="story" aria-labelledby="story-h">
+  <h2 class="eyebrow" id="story-h">Our story</h2>
   <img class="team" src="team.jpg" width="872" height="880" loading="lazy" decoding="async" alt="Andrew Stein and Asher Strell, the founders of Tevah, at a party.">
   <p class="lede"><span class="m">We deployed software at Palantir:</span> Lowe’s supply chain, Army logistics through the Iran war ($18M), and AI transformation at a $10B kidney care company.</p>
-  <ul class="founders"><li><a href="https://www.linkedin.com/in/asher-strell/" target="_blank" rel="noopener" aria-label="Asher Strell on LinkedIn"><b>Asher Strell</b><i aria-hidden="true">↗</i></a><span>Cofounder</span></li><li><a href="https://www.linkedin.com/in/andrew-stein10/" target="_blank" rel="noopener" aria-label="Andrew Stein on LinkedIn"><b>Andrew Stein</b><i aria-hidden="true">↗</i></a><span>Cofounder</span></li></ul>
+  <p class="body">Now we’re bringing it home, to the community we know and are trusted in.</p>
+  <ul class="founders"><li><b>Asher Strell</b><span>Cofounder</span></li><li><b>Andrew Stein</b><span>Cofounder</span></li></ul>
   <p class="backed">Backed by Greywood</p>
 </section>
 <footer class="ap" style="--d:0.34s"><span class="fde">Bringing AI to the rest of the economy.</span><span>© 2026 Tevah · Makers of Ark · tevah.io</span></footer>
@@ -295,6 +299,12 @@ const DROPS = Array.from({ length: 420 }, () => [rnd() * W * 1.15, rnd() * H, 4 
 
 // ---------- canvas ----------
 const cv = document.getElementById('bg');
+// tell people the picture is alive, once the scene has had a moment; it bows out at the first click or tap
+const hint = document.getElementById('hint');
+let hintGone = reduced;
+if (touch) hint.lastChild.textContent = 'Tap the picture';
+if (!reduced) setTimeout(() => hintGone || hint.classList.add('on'), 2600);
+cv.addEventListener('pointerdown', () => { hintGone = true; hint.classList.remove('on'); }, { once: true });
 cv.width = W; cv.height = H;
 const ctx = cv.getContext('2d');
 const img = ctx.createImageData(W, H), buf = new Uint32Array(img.data.buffer);
