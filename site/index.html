@@ -41,7 +41,7 @@
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--sans); -webkit-font-smoothing: antialiased;
-         display: grid; grid-template-rows: 1fr auto; min-height: 100%; }
+         display: grid; grid-template-rows: auto auto auto; min-height: 100%; }
   body.locked { overflow: hidden; }
 
   main { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -62,7 +62,6 @@
 
   h1 { margin: var(--gap) 0 0; font-size: clamp(30px, calc(var(--fw) * 0.048), calc(var(--h1max) * 1.09)); line-height: 1.04; letter-spacing: -0.015em;
        font-family: var(--serif); font-weight: 500; text-wrap: balance; }
-  h1 .r { color: #f5b83d; }
   h1 .m { color: var(--muted); }
   .ph { display: inline-block; }   /* break between the two halves of a line, not inside one */
   footer .fde { opacity: 0.7; }
@@ -81,6 +80,20 @@
   .pill.ghost { background: transparent; color: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); }
   .pill.ghost:hover { box-shadow: inset 0 0 0 1px var(--paper); }
   .pill:focus-visible, .x:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+  /* the hero fills the first screen on wider screens; who we are sits just below it */
+  @media (min-width: 700px) { main { min-height: 100svh; } .who { margin-top: 0; } }
+  /* who we are: below the hero, one statement and the two founders */
+  .who { width: min(var(--fw), 760px); max-width: calc(100% - 32px); margin: 56px auto 0; padding: clamp(48px, 9vh, 96px) 0 clamp(16px, 4vh, 48px);
+         border-top: 1px solid var(--faint); text-align: center; }
+  .who .eyebrow { margin: 0; font: 500 var(--foot)/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .who .lede { margin: 22px auto 0; font: 500 clamp(22px, calc(var(--fw) * 0.026), 34px)/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; }
+  .who .lede .m { color: var(--muted); }
+  .founders { list-style: none; margin: 36px 0 0; padding: 0; display: flex; justify-content: center; gap: clamp(28px, 6vw, 72px); }
+  .founders li { display: grid; gap: 8px; }
+  .founders b { font: 700 var(--body)/1 var(--sans); letter-spacing: -0.015em; }
+  .founders span, .who .backed { font: 400 var(--foot)/1 var(--mono); letter-spacing: 0.04em; color: var(--muted); }
+  .who .backed { margin: 32px 0 0; }
 
   footer { margin-top: calc(var(--footpad) + 4px); padding-block: var(--footpad); text-align: center; display: grid; gap: 7px; line-height: 1.4; font: 400 var(--foot)/1 var(--mono); color: var(--muted); letter-spacing: 0.02em;
            padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -143,13 +156,19 @@
   <div class="frame" id="frame">
     <canvas id="bg" role="img" aria-label="A dithered illustration: a storm clears, the ark lands, and people walk out onto new ground toward the sun."></canvas>
   </div>
-  <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> <span class="r">Rise with it.</span></h1>
+  <h1 class="ap" style="--d:0.08s"><span class="m">AI is the flood.</span> Rise with it.</h1>
   <p class="desc ap" style="--d:0.22s"><span class="ph"><span class="q">Engineers inside your business,</span></span> <span class="ph"><span class="q">shipping the AI that changes how it runs.</span></span> <span class="ph"><span class="q">We don’t leave until you’re ahead.</span></span></p>
   <div class="ctas ap" style="--d:0.28s">
     <button class="pill" type="button" data-open="talk">Get in touch <span class="ar" aria-hidden="true">→</span></button>
     <button class="pill ghost" type="button" data-open="hire">We're hiring <span class="ar" aria-hidden="true">→</span></button>
   </div>
 </main>
+<section class="who" id="who" aria-labelledby="who-h">
+  <h2 class="eyebrow" id="who-h">Who we are</h2>
+  <p class="lede"><span class="m">We deployed software at Palantir:</span> Lowe’s supply chain, Army logistics through the Iran war ($18M), and AI transformation at a $10B kidney care company.</p>
+  <ul class="founders"><li><b>Asher Strell</b><span>Cofounder</span></li><li><b>Andrew Stein</b><span>Cofounder</span></li></ul>
+  <p class="backed">Backed by Greywood</p>
+</section>
 <footer class="ap" style="--d:0.34s"><span class="fde">Bringing AI to the rest of the economy.</span><span>© 2026 Tevah · Makers of Ark · tevah.io</span></footer>
 
 <div class="scrim" id="talk" hidden>
