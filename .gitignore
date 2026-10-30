@@ -11,3 +11,4 @@ site/.vercel/
 !source/bg_layers.json
 !brand/
 !brand/*.svg
+!source/team.jpg

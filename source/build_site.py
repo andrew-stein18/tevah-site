@@ -1,14 +1,16 @@
 """Builds the Tevah page two ways from site.template.html + bg_layers.json:
    ../tevah-site.html  the claude.ai artifact (the publisher adds the document skeleton)
    ../site/            a standalone static site for tevah.io (Vercel)"""
-import json, pathlib, re
+import base64, json, pathlib, re
 
 here = pathlib.Path(__file__).parent
 root = here.parent
 tpl = (here / "site.template.html").read_text()
 data = json.dumps(json.loads((here / "bg_layers.json").read_text()), separators=(",", ":"))
 page = tpl.replace("/*DATA*/null", data, 1)
-(root / "tevah-site.html").write_text(page)
+# the artifact is one file, so the team photo rides inline there; the site serves it as a file
+team = (here / "team.jpg").read_bytes()
+(root / "tevah-site.html").write_text(page.replace('src="team.jpg"', 'src="data:image/jpeg;base64,' + base64.b64encode(team).decode() + '"', 1))
 
 URL = "https://tevah.io"
 TITLE = "Tevah · AI is the flood. Rise with it."
@@ -44,9 +46,10 @@ head = f"""<!doctype html>
 site = root / "site"
 site.mkdir(exist_ok=True)
 (site / "index.html").write_text(head + body.strip() + "\n</body>\n</html>\n")
+(site / "team.jpg").write_bytes(team)
 (site / "favicon.svg").write_text(re.search(r"data:image/svg\+xml,(.*?)\">", icon).group(1).replace("%23", "#"))
 (site / "vercel.json").write_text(json.dumps({"cleanUrls": True, "headers": [
     {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"},
         {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "DENY"}]},
-    {"source": "/(.*).png", "headers": [{"key": "Cache-Control", "value": "public, max-age=604800"}]}]}, indent=2))
+    {"source": "/(.*).(png|jpg)", "headers": [{"key": "Cache-Control", "value": "public, max-age=604800"}]}]}, indent=2))
 print("built", len(page), "bytes")
